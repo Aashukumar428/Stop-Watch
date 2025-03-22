@@ -7,42 +7,50 @@ body {
     transition: background 0.3s, color 0.3s;
 }
 
-/* Stopwatches Container - Arranges stopwatches in a row */
+/* Stopwatches aligned next to each other */
 #stopwatch-container {
     display: flex;
-    flex-wrap: wrap;  /* Ensures stopwatches wrap on new line if needed */
-    gap: 10px;  /* Space between stopwatches */
-    justify-content: flex-start; /* Centers stopwatches */
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
 }
 
-/* Individual Stopwatch */
+/* Stopwatch Styling */
 .stopwatch {
-    background-color: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-    width: 220px;
     display: flex;
-    flex-direction: column;  /* Ensures buttons are stacked vertically */
+    flex-direction: column;  /* Stack elements inside vertically */
     align-items: center;
-    transition: background 0.3s, color 0.3s;
+    padding: 15px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    width: 220px; /* Fixed width for alignment */
+    text-align: center;
+    position: relative; /* Required for delete button positioning */
 }
 
-/* Stopwatch Title */
-h2 {
-    font-size: 18px;
+/* Buttons inside the stopwatch stacked vertically */
+.stopwatch button {
+    width: 100%; /* Make all buttons take full width inside */
+    margin: 5px 0; /* Adds spacing between buttons */
 }
 
-/* Buttons Styling */
-button {
-    padding: 8px;
-    margin: 5px;
-    font-size: 14px;
-    cursor: pointer;
+/* Position delete button (❌) at the top-right of the stopwatch */
+.delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    padding: 5px 7px;
+    border-radius: 50%;
     border: none;
-    border-radius: 5px;
-    width: 90%;  /* Ensures buttons take full width inside stopwatch */
-    transition: 0.3s;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
 }
 
 /* Dark Mode */
@@ -142,20 +150,4 @@ input:checked + .slider:before {
 
 .reset-btn:hover {
     background-color: #1e88e5;
-}
-
-/* Delete (❌) Button - Small, Red */
-.delete-btn {
-    background-color: #ff3333;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-left: 5px;
-}
-
-.delete-btn:hover {
-    background-color: #cc0000;
 }
