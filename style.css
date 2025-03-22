@@ -8,7 +8,7 @@ body {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 600px auto;
     margin: 20px auto;
 }
 
