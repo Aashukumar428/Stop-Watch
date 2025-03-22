@@ -1,99 +1,101 @@
+document.getElementById("toggleDarkMode").addEventListener("change", toggleDarkMode);
+
+// Load Dark Mode preference on page load
+if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+    document.getElementById("toggleDarkMode").checked = true;
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+
+    // Save preference
+    if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("darkMode", "enabled");
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+    }
+}
+
+// Stopwatch Logic
+let stopwatches = [];
 document.getElementById("addStopwatch").addEventListener("click", addStopwatch);
 
 function addStopwatch() {
-    let container = document.getElementById("stopwatches");
-
-    let stopwatch = document.createElement("div");
-    stopwatch.classList.add("stopwatch");
-    stopwatch.innerHTML = `
-        <input type="text" class="task-name" placeholder="Enter Task Name" />
-        <h2>00:00:00.00</h2> <!-- Two-digit milliseconds -->
-        <button class="start">Start</button>
-        <button class="pause">Pause</button>
-        <button class="reset">Reset</button>
-        <button class="lap">Lap</button>
-        <ul class="laps"></ul>
+    let stopwatchId = stopwatches.length;
+    
+    let stopwatchDiv = document.createElement("div");
+    stopwatchDiv.classList.add("stopwatch");
+    stopwatchDiv.setAttribute("id", "stopwatch-" + stopwatchId);
+    
+    stopwatchDiv.innerHTML = `
+        <h2>Stopwatch ${stopwatchId + 1}</h2>
+        <p id="display-${stopwatchId}">00:00:00:00</p>
+        <button onclick="startStopwatch(${stopwatchId})">Start</button>
+        <button onclick="pauseStopwatch(${stopwatchId})">Pause</button>
+        <button onclick="resetStopwatch(${stopwatchId})">Reset</button>
+        <button onclick="lapStopwatch(${stopwatchId})">Lap</button>
+        <ul id="laps-${stopwatchId}"></ul>
     `;
 
-    container.appendChild(stopwatch);
+    document.getElementById("stopwatches").appendChild(stopwatchDiv);
+    stopwatches.push({ time: 0, interval: null, laps: [] });
+}
 
-    let timer;
-    let milliseconds = 0, seconds = 0, minutes = 0, hours = 0;
-    let running = false;
-    let lastTime = 0;
-
-    let taskInput = stopwatch.querySelector(".task-name");
-    let display = stopwatch.querySelector("h2");
-    let startButton = stopwatch.querySelector(".start");
-    let pauseButton = stopwatch.querySelector(".pause");
-    let resetButton = stopwatch.querySelector(".reset");
-    let lapButton = stopwatch.querySelector(".lap");
-    let lapsContainer = stopwatch.querySelector(".laps");
-
-    function updateDisplay() {
-        let formattedMilliseconds = Math.floor(milliseconds / 10); // Convert to 2-digit
-
-        let formattedTime =
-            (hours < 10 ? "0" : "") + hours + ":" +
-            (minutes < 10 ? "0" : "") + minutes + ":" +
-            (seconds < 10 ? "0" : "") + seconds + "." +
-            (formattedMilliseconds < 10 ? "0" : "") + formattedMilliseconds;
-
-        display.innerText = formattedTime;
+function startStopwatch(id) {
+    if (!stopwatches[id].interval) {
+        stopwatches[id].interval = setInterval(() => {
+            stopwatches[id].time += 10; // Increment time in milliseconds
+            updateDisplay(id);
+        }, 10);
     }
+}
 
-    function startTimer() {
-        if (!running) {
-            running = true;
-            lastTime = Date.now();
-            timer = setInterval(() => {
-                let now = Date.now();
-                let elapsed = now - lastTime;
-                lastTime = now;
+function pauseStopwatch(id) {
+    clearInterval(stopwatches[id].interval);
+    stopwatches[id].interval = null;
+}
 
-                milliseconds += elapsed;
-                while (milliseconds >= 1000) {
-                    milliseconds -= 1000;
-                    seconds++;
-                }
-                while (seconds >= 60) {
-                    seconds -= 60;
-                    minutes++;
-                }
-                while (minutes >= 60) {
-                    minutes -= 60;
-                    hours++;
-                }
+function resetStopwatch(id) {
+    clearInterval(stopwatches[id].interval);
+    stopwatches[id].interval = null;
+    stopwatches[id].time = 0;
+    stopwatches[id].laps = [];
+    updateDisplay(id);
+    document.getElementById(`laps-${id}`).innerHTML = "";
+}
 
-                updateDisplay();
-            }, 10);
-        }
-    }
+function lapStopwatch(id) {
+    let time = stopwatches[id].time;
+    let hours = Math.floor(time / 3600000);
+    let minutes = Math.floor((time % 3600000) / 60000);
+    let seconds = Math.floor((time % 60000) / 1000);
+    let milliseconds = Math.floor((time % 1000) / 10);
 
-    function pauseTimer() {
-        running = false;
-        clearInterval(timer);
-    }
+    let lapTime = 
+        (hours < 10 ? "0" : "") + hours + ":" +
+        (minutes < 10 ? "0" : "") + minutes + ":" +
+        (seconds < 10 ? "0" : "") + seconds + ":" +
+        (milliseconds < 10 ? "0" : "") + milliseconds;
 
-    function resetTimer() {
-        running = false;
-        clearInterval(timer);
-        milliseconds = 0;
-        seconds = 0;
-        minutes = 0;
-        hours = 0;
-        updateDisplay();
-        lapsContainer.innerHTML = "";
-    }
+    stopwatches[id].laps.push(lapTime);
 
-    function addLap() {
-        let lapItem = document.createElement("li");
-        lapItem.innerText = `${taskInput.value || "Task"} - ${display.innerText}`;
-        lapsContainer.appendChild(lapItem);
-    }
+    let lapList = document.getElementById(`laps-${id}`);
+    let lapItem = document.createElement("li");
+    lapItem.innerText = lapTime;
+    lapList.appendChild(lapItem);
+}
 
-    startButton.addEventListener("click", startTimer);
-    pauseButton.addEventListener("click", pauseTimer);
-    resetButton.addEventListener("click", resetTimer);
-    lapButton.addEventListener("click", addLap);
+function updateDisplay(id) {
+    let time = stopwatches[id].time;
+    let hours = Math.floor(time / 3600000);
+    let minutes = Math.floor((time % 3600000) / 60000);
+    let seconds = Math.floor((time % 60000) / 1000);
+    let milliseconds = Math.floor((time % 1000) / 10);
+
+    document.getElementById(`display-${id}`).innerText =
+        (hours < 10 ? "0" : "") + hours + ":" +
+        (minutes < 10 ? "0" : "") + minutes + ":" +
+        (seconds < 10 ? "0" : "") + seconds + ":" +
+        (milliseconds < 10 ? "0" : "") + milliseconds;
 }
