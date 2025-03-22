@@ -6,7 +6,7 @@ function addStopwatch() {
     let stopwatch = document.createElement("div");
     stopwatch.classList.add("stopwatch");
     stopwatch.innerHTML = `
-        <h2>00:00:00</h2>
+        <h2>00:00:00.000</h2> <!-- Added milliseconds display -->
         <button class="start">Start</button>
         <button class="pause">Pause</button>
         <button class="reset">Reset</button>
@@ -17,8 +17,9 @@ function addStopwatch() {
     container.appendChild(stopwatch);
 
     let timer;
-    let seconds = 0, minutes = 0, hours = 0;
+    let milliseconds = 0, seconds = 0, minutes = 0, hours = 0;
     let running = false;
+    let lastTime = 0;
 
     let display = stopwatch.querySelector("h2");
     let startButton = stopwatch.querySelector(".start");
@@ -31,25 +32,37 @@ function addStopwatch() {
         let formattedTime = 
             (hours < 10 ? "0" : "") + hours + ":" +
             (minutes < 10 ? "0" : "") + minutes + ":" +
-            (seconds < 10 ? "0" : "") + seconds;
+            (seconds < 10 ? "0" : "") + seconds + "." +
+            (milliseconds < 100 ? (milliseconds < 10 ? "00" : "0") : "") + milliseconds;
+
         display.innerText = formattedTime;
     }
 
     function startTimer() {
         if (!running) {
             running = true;
+            lastTime = Date.now();
             timer = setInterval(() => {
-                seconds++;
-                if (seconds === 60) {
-                    seconds = 0;
+                let now = Date.now();
+                let elapsed = now - lastTime;
+                lastTime = now;
+
+                milliseconds += elapsed;
+                while (milliseconds >= 1000) {
+                    milliseconds -= 1000;
+                    seconds++;
+                }
+                while (seconds >= 60) {
+                    seconds -= 60;
                     minutes++;
                 }
-                if (minutes === 60) {
-                    minutes = 0;
+                while (minutes >= 60) {
+                    minutes -= 60;
                     hours++;
                 }
+
                 updateDisplay();
-            }, 1000);
+            }, 10); // Updates every 10ms for better accuracy
         }
     }
 
@@ -61,6 +74,7 @@ function addStopwatch() {
     function resetTimer() {
         running = false;
         clearInterval(timer);
+        milliseconds = 0;
         seconds = 0;
         minutes = 0;
         hours = 0;
