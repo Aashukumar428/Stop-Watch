@@ -151,3 +151,23 @@ input:checked + .slider:before {
 .delete-btn:hover {
     background-color: #cc0000;
 }
+
+#stopwatch-container {
+    display: flex;
+    flex-wrap: wrap;  /* Allows wrapping if too many stopwatches */
+    gap: 10px;  /* Space between stopwatches */
+    justify-content: flex-start;  /* Aligns items from the left */
+}
+
+/* Ensure individual stopwatches are properly displayed */
+.stopwatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    width: 200px;  /* Set a fixed width for each stopwatch */
+}
+
