@@ -1,3 +1,4 @@
+// Dark Mode Toggle
 document.getElementById("toggleDarkMode").addEventListener("change", toggleDarkMode);
 
 // Load Dark Mode preference on page load
@@ -43,15 +44,29 @@ function addStopwatch() {
     stopwatches.push({ running: false, time: 0, interval: null });
 }
 
-
 // Function to Delete Stopwatch
 function deleteStopwatch(id) {
     let stopwatchElement = document.getElementById(`stopwatch-${id}`);
     if (stopwatchElement) {
         stopwatchElement.remove();
     }
-}
 
+    // Remove from stopwatches array
+    stopwatches.splice(id, 1);
+
+    // Update IDs of remaining stopwatches
+    document.querySelectorAll(".stopwatch").forEach((stopwatch, index) => {
+        stopwatch.setAttribute("id", `stopwatch-${index}`);
+        stopwatch.querySelector("h2").innerText = `Stopwatch ${index + 1}`;
+        stopwatch.querySelector("p").setAttribute("id", `display-${index}`);
+        stopwatch.querySelector(".start-btn").setAttribute("onclick", `startStopwatch(${index})`);
+        stopwatch.querySelector(".pause-btn").setAttribute("onclick", `pauseStopwatch(${index})`);
+        stopwatch.querySelector(".stop-btn").setAttribute("onclick", `resetStopwatch(${index})`);
+        stopwatch.querySelector(".reset-btn").setAttribute("onclick", `lapStopwatch(${index})`);
+        stopwatch.querySelector(".delete-btn").setAttribute("onclick", `deleteStopwatch(${index})`);
+        stopwatch.querySelector("ul").setAttribute("id", `laps-${index}`);
+    });
+}
 
 function startStopwatch(id) {
     if (!stopwatches[id].interval) {
