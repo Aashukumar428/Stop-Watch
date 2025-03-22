@@ -7,27 +7,30 @@ body {
     transition: background 0.3s, color 0.3s;
 }
 
-.container {
-    max-width: 100px;
-    margin: 20px;
+/* Stopwatches aligned next to each other */
+#stopwatches {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
 }
 
 /* Stopwatch Styling */
 .stopwatch {
-    background-color: gold;
+    background-color: white;
     padding: 15px;
-    margin: 10px auto;
     border-radius: 10px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
     transition: background 0.3s, color 0.3s;
+    width: 220px;
 }
 
 h2 {
-    font-size: 20px;
+    font-size: 18px;
 }
 
 button {
-    padding: 8px 12px;
+    padding: 8px;
     margin: 5px;
     font-size: 14px;
     cursor: pointer;
