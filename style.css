@@ -11,31 +11,38 @@ body {
 #stopwatch-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
     justify-content: center;
+    gap: 15px;
 }
 
 /* Stopwatch Styling */
 .stopwatch {
-    display: flex;
-    flex-direction: column;  /* Stack elements inside vertically */
-    align-items: center;
+    background-color: white;
     padding: 15px;
-    border: 2px solid #ccc;
     border-radius: 10px;
-    background-color: #f9f9f9;
-    width: 220px; /* Fixed width for alignment */
-    text-align: center;
-    position: relative; /* Required for delete button positioning */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s, color 0.3s;
+    width: 250px;
+    position: relative; /* For positioning the delete button */
 }
 
-/* Buttons inside the stopwatch stacked vertically */
+/* Buttons inside the stopwatch placed side by side */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 5px;
+}
+
 .stopwatch button {
-    width: 100%; /* Make all buttons take full width inside */
-    margin: 5px 0; /* Adds spacing between buttons */
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
 }
 
-/* Position delete button (❌) at the top-right of the stopwatch */
+/* Delete button (❌) positioned at the top-right */
 .delete-btn {
     position: absolute;
     top: 5px;
