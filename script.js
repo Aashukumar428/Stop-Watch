@@ -1,4 +1,3 @@
-// Dark Mode Toggle
 document.getElementById("toggleDarkMode").addEventListener("change", toggleDarkMode);
 
 // Load Dark Mode preference on page load
@@ -30,13 +29,13 @@ function addStopwatch() {
     stopwatchDiv.setAttribute("id", `stopwatch-${stopwatchId}`);
     
     stopwatchDiv.innerHTML = `
+        <button class="delete-btn" onclick="deleteStopwatch(${stopwatchId})">❌</button>
         <h2>Stopwatch ${stopwatchId + 1}</h2>
         <p id="display-${stopwatchId}">00:00:00:00</p>
         <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
         <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
         <button class="stop-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
         <button class="reset-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
-        <button class="delete-btn" onclick="deleteStopwatch(${stopwatchId})">❌</button>
         <ul id="laps-${stopwatchId}"></ul>
     `;
 
@@ -44,28 +43,11 @@ function addStopwatch() {
     stopwatches.push({ running: false, time: 0, interval: null });
 }
 
-// Function to Delete Stopwatch
 function deleteStopwatch(id) {
     let stopwatchElement = document.getElementById(`stopwatch-${id}`);
     if (stopwatchElement) {
         stopwatchElement.remove();
     }
-
-    // Remove from stopwatches array
-    stopwatches.splice(id, 1);
-
-    // Update IDs of remaining stopwatches
-    document.querySelectorAll(".stopwatch").forEach((stopwatch, index) => {
-        stopwatch.setAttribute("id", `stopwatch-${index}`);
-        stopwatch.querySelector("h2").innerText = `Stopwatch ${index + 1}`;
-        stopwatch.querySelector("p").setAttribute("id", `display-${index}`);
-        stopwatch.querySelector(".start-btn").setAttribute("onclick", `startStopwatch(${index})`);
-        stopwatch.querySelector(".pause-btn").setAttribute("onclick", `pauseStopwatch(${index})`);
-        stopwatch.querySelector(".stop-btn").setAttribute("onclick", `resetStopwatch(${index})`);
-        stopwatch.querySelector(".reset-btn").setAttribute("onclick", `lapStopwatch(${index})`);
-        stopwatch.querySelector(".delete-btn").setAttribute("onclick", `deleteStopwatch(${index})`);
-        stopwatch.querySelector("ul").setAttribute("id", `laps-${index}`);
-    });
 }
 
 function startStopwatch(id) {
@@ -93,35 +75,15 @@ function resetStopwatch(id) {
 
 function lapStopwatch(id) {
     let time = stopwatches[id].time;
-    let hours = Math.floor(time / 3600000);
-    let minutes = Math.floor((time % 3600000) / 60000);
-    let seconds = Math.floor((time % 60000) / 1000);
-    let milliseconds = Math.floor((time % 1000) / 10);
-
-    let lapTime = 
-        (hours < 10 ? "0" : "") + hours + ":" +
-        (minutes < 10 ? "0" : "") + minutes + ":" +
-        (seconds < 10 ? "0" : "") + seconds + ":" +
-        (milliseconds < 10 ? "0" : "") + milliseconds;
-
-    stopwatches[id].laps.push(lapTime);
-
+    let formattedTime = new Date(time).toISOString().substr(11, 12);
     let lapList = document.getElementById(`laps-${id}`);
     let lapItem = document.createElement("li");
-    lapItem.innerText = lapTime;
+    lapItem.innerText = formattedTime;
     lapList.appendChild(lapItem);
 }
 
 function updateDisplay(id) {
-    let time = stopwatches[id].time;
-    let hours = Math.floor(time / 3600000);
-    let minutes = Math.floor((time % 3600000) / 60000);
-    let seconds = Math.floor((time % 60000) / 1000);
-    let milliseconds = Math.floor((time % 1000) / 10);
-
-    document.getElementById(`display-${id}`).innerText =
-        (hours < 10 ? "0" : "") + hours + ":" +
-        (minutes < 10 ? "0" : "") + minutes + ":" +
-        (seconds < 10 ? "0" : "") + seconds + ":" +
-        (milliseconds < 10 ? "0" : "") + milliseconds;
+    let formattedTime = new Date(stopwatches[id].time).toISOString().substr(11, 12);
+    document.getElementById(`display-${id}`).innerText = formattedTime;
 }
+
