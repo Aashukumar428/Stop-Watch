@@ -43,6 +43,7 @@ function addStopwatch() {
     stopwatches.push({ running: false, time: 0, interval: null });
 }
 
+
 // Function to Delete Stopwatch
 function deleteStopwatch(id) {
     let stopwatchElement = document.getElementById(`stopwatch-${id}`);
