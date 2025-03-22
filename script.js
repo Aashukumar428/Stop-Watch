@@ -29,14 +29,14 @@ function addStopwatch() {
     stopwatchDiv.setAttribute("id", "stopwatch-" + stopwatchId);
     
     stopwatchDiv.innerHTML = `
-        <h2>Stopwatch ${stopwatchId + 1}</h2>
-        <p id="display-${stopwatchId}">00:00:00:00</p>
-        <button onclick="startStopwatch(${stopwatchId})">Start</button>
-        <button onclick="pauseStopwatch(${stopwatchId})">Pause</button>
-        <button onclick="resetStopwatch(${stopwatchId})">Reset</button>
-        <button onclick="lapStopwatch(${stopwatchId})">Lap</button>
-        <ul id="laps-${stopwatchId}"></ul>
-    `;
+    <h2>Stopwatch ${stopwatchId + 1}</h2>
+    <p id="display-${stopwatchId}">00:00:00:00</p>
+    <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
+    <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
+    <button class="stop-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
+    <button class="reset-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
+    <ul id="laps-${stopwatchId}"></ul>
+`;
 
     document.getElementById("stopwatches").appendChild(stopwatchDiv);
     stopwatches.push({ time: 0, interval: null, laps: [] });
