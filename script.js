@@ -6,7 +6,8 @@ function addStopwatch() {
     let stopwatch = document.createElement("div");
     stopwatch.classList.add("stopwatch");
     stopwatch.innerHTML = `
-        <h2>00:00:00.000</h2> <!-- Added milliseconds display -->
+        <input type="text" class="task-name" placeholder="Enter Task Name" />
+        <h2>00:00:00.00</h2> <!-- Two-digit milliseconds -->
         <button class="start">Start</button>
         <button class="pause">Pause</button>
         <button class="reset">Reset</button>
@@ -21,6 +22,7 @@ function addStopwatch() {
     let running = false;
     let lastTime = 0;
 
+    let taskInput = stopwatch.querySelector(".task-name");
     let display = stopwatch.querySelector("h2");
     let startButton = stopwatch.querySelector(".start");
     let pauseButton = stopwatch.querySelector(".pause");
@@ -29,11 +31,13 @@ function addStopwatch() {
     let lapsContainer = stopwatch.querySelector(".laps");
 
     function updateDisplay() {
-        let formattedTime = 
+        let formattedMilliseconds = Math.floor(milliseconds / 10); // Convert to 2-digit
+
+        let formattedTime =
             (hours < 10 ? "0" : "") + hours + ":" +
             (minutes < 10 ? "0" : "") + minutes + ":" +
             (seconds < 10 ? "0" : "") + seconds + "." +
-            (milliseconds < 100 ? (milliseconds < 10 ? "00" : "0") : "") + milliseconds;
+            (formattedMilliseconds < 10 ? "0" : "") + formattedMilliseconds;
 
         display.innerText = formattedTime;
     }
@@ -62,7 +66,7 @@ function addStopwatch() {
                 }
 
                 updateDisplay();
-            }, 10); // Updates every 10ms for better accuracy
+            }, 10);
         }
     }
 
@@ -84,7 +88,7 @@ function addStopwatch() {
 
     function addLap() {
         let lapItem = document.createElement("li");
-        lapItem.innerText = display.innerText;
+        lapItem.innerText = `${taskInput.value || "Task"} - ${display.innerText}`;
         lapsContainer.appendChild(lapItem);
     }
 
@@ -93,3 +97,4 @@ function addStopwatch() {
     resetButton.addEventListener("click", resetTimer);
     lapButton.addEventListener("click", addLap);
 }
+
