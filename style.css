@@ -1,16 +1,15 @@
-/* General Styling */
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
+    text-align: center;
     background-color: #f4f4f4;
     color: #333;
-    text-align: center;
     transition: background 0.3s, color 0.3s;
 }
 
 .container {
     max-width: 600px;
     margin: 20px auto;
-    padding: 20px;
 }
 
 /* Stopwatch Styling */
@@ -24,8 +23,7 @@ body {
 }
 
 h2 {
-    font-size: 24px;
-    margin: 10px 0;
+    font-size: 20px;
 }
 
 button {
@@ -38,30 +36,6 @@ button {
     transition: 0.3s;
 }
 
-button.start {
-    background-color: #28a745;
-    color: white;
-}
-
-button.pause {
-    background-color: #ffc107;
-    color: black;
-}
-
-button.reset {
-    background-color: #dc3545;
-    color: white;
-}
-
-button.lap {
-    background-color: #007bff;
-    color: white;
-}
-
-button:hover {
-    opacity: 0.8;
-}
-
 /* Dark Mode */
 body.dark-mode {
     background-color: #121212;
@@ -69,55 +43,54 @@ body.dark-mode {
 }
 
 .dark-mode .stopwatch {
-    background-color: #333;
-    color: white;
-    border: 1px solid #888;
-}
-
-.dark-mode button {
-    background-color: #555;
-    color: white;
-}
-
-/* Task Name Input */
-.task-name {
-    width: 80%;
-    padding: 5px;
-    font-size: 16px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-}
-
-/* Lap Times */
-.laps {
-    list-style-type: none;
-    padding: 0;
-}
-
-.laps li {
-    background: #ddd;
-    margin: 5px 0;
-    padding: 5px;
-    border-radius: 5px;
-}
-
-.dark-mode .laps li {
-    background: #444;
-    color: white;
-}
-
-/* Dark Mode Toggle Button */
-#toggleDarkMode {
     background-color: #222;
     color: white;
-    padding: 10px 15px;
-    font-size: 14px;
-    border-radius: 5px;
-    margin: 15px 0;
 }
 
-#toggleDarkMode:hover {
-    background-color: #444;
+/* Dark Mode Toggle Switch */
+.switch {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 20px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
 }
