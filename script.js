@@ -1,4 +1,21 @@
 document.getElementById("addStopwatch").addEventListener("click", addStopwatch);
+document.getElementById("toggleDarkMode").addEventListener("click", toggleDarkMode);
+
+// Load Dark Mode preference on page load
+if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+
+    // Save preference
+    if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("darkMode", "enabled");
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+    }
+}
 
 function addStopwatch() {
     let container = document.getElementById("stopwatches");
@@ -7,7 +24,7 @@ function addStopwatch() {
     stopwatch.classList.add("stopwatch");
     stopwatch.innerHTML = `
         <input type="text" class="task-name" placeholder="Enter Task Name" />
-        <h2>00:00:00.00</h2> <!-- Two-digit milliseconds -->
+        <h2>00:00:00.00</h2>
         <button class="start">Start</button>
         <button class="pause">Pause</button>
         <button class="reset">Reset</button>
@@ -31,8 +48,7 @@ function addStopwatch() {
     let lapsContainer = stopwatch.querySelector(".laps");
 
     function updateDisplay() {
-        let formattedMilliseconds = Math.floor(milliseconds / 10); // Convert to 2-digit
-
+        let formattedMilliseconds = Math.floor(milliseconds / 10);
         let formattedTime =
             (hours < 10 ? "0" : "") + hours + ":" +
             (minutes < 10 ? "0" : "") + minutes + ":" +
@@ -97,4 +113,3 @@ function addStopwatch() {
     resetButton.addEventListener("click", resetTimer);
     lapButton.addEventListener("click", addLap);
 }
-
