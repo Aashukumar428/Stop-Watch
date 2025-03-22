@@ -26,21 +26,31 @@ function addStopwatch() {
     
     let stopwatchDiv = document.createElement("div");
     stopwatchDiv.classList.add("stopwatch");
-    stopwatchDiv.setAttribute("id", "stopwatch-" + stopwatchId);
+    stopwatchDiv.setAttribute("id", `stopwatch-${stopwatchId}`);
     
     stopwatchDiv.innerHTML = `
-    <h2>Stopwatch ${stopwatchId + 1}</h2>
-    <p id="display-${stopwatchId}">00:00:00:00</p>
-    <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
-    <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
-    <button class="stop-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
-    <button class="reset-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
-    <ul id="laps-${stopwatchId}"></ul>
-`;
+        <h2>Stopwatch ${stopwatchId + 1}</h2>
+        <p id="display-${stopwatchId}">00:00:00:00</p>
+        <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
+        <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
+        <button class="stop-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
+        <button class="reset-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
+        <button class="delete-btn" onclick="deleteStopwatch(${stopwatchId})">❌</button>
+        <ul id="laps-${stopwatchId}"></ul>
+    `;
 
-    document.getElementById("stopwatches").appendChild(stopwatchDiv);
-    stopwatches.push({ time: 0, interval: null, laps: [] });
+    document.getElementById("stopwatch-container").appendChild(stopwatchDiv);
+    stopwatches.push({ running: false, time: 0, interval: null });
 }
+
+// Function to Delete Stopwatch
+function deleteStopwatch(id) {
+    let stopwatchElement = document.getElementById(`stopwatch-${id}`);
+    if (stopwatchElement) {
+        stopwatchElement.remove();
+    }
+}
+
 
 function startStopwatch(id) {
     if (!stopwatches[id].interval) {
