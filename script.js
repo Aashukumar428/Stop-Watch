@@ -32,10 +32,12 @@ function addStopwatch() {
         <button class="delete-btn" onclick="deleteStopwatch(${stopwatchId})">❌</button>
         <h2>Stopwatch ${stopwatchId + 1}</h2>
         <p id="display-${stopwatchId}">00:00:00:00</p>
-        <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
-        <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
-        <button class="stop-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
-        <button class="reset-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
+        <div class="button-group">
+            <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
+            <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
+            <button class="stop-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
+            <button class="reset-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
+        </div>
         <ul id="laps-${stopwatchId}"></ul>
     `;
 
@@ -43,6 +45,7 @@ function addStopwatch() {
     stopwatches.push({ running: false, time: 0, interval: null });
 }
 
+// Function to Delete Stopwatch
 function deleteStopwatch(id) {
     let stopwatchElement = document.getElementById(`stopwatch-${id}`);
     if (stopwatchElement) {
@@ -53,7 +56,7 @@ function deleteStopwatch(id) {
 function startStopwatch(id) {
     if (!stopwatches[id].interval) {
         stopwatches[id].interval = setInterval(() => {
-            stopwatches[id].time += 10; // Increment time in milliseconds
+            stopwatches[id].time += 10;
             updateDisplay(id);
         }, 10);
     }
@@ -75,15 +78,20 @@ function resetStopwatch(id) {
 
 function lapStopwatch(id) {
     let time = stopwatches[id].time;
-    let formattedTime = new Date(time).toISOString().substr(11, 12);
+    let hours = Math.floor(time / 3600000);
+    let minutes = Math.floor((time % 3600000) / 60000);
+    let seconds = Math.floor((time % 60000) / 1000);
+    let milliseconds = Math.floor((time % 1000) / 10);
+
+    let lapTime = `${hours}:${minutes}:${seconds}:${milliseconds}`;
+    
     let lapList = document.getElementById(`laps-${id}`);
     let lapItem = document.createElement("li");
-    lapItem.innerText = formattedTime;
+    lapItem.innerText = lapTime;
     lapList.appendChild(lapItem);
 }
 
 function updateDisplay(id) {
-    let formattedTime = new Date(stopwatches[id].time).toISOString().substr(11, 12);
-    document.getElementById(`display-${id}`).innerText = formattedTime;
+    let time = stopwatches[id].time;
+    document.getElementById(`display-${id}`).innerText = new Date(time).toISOString().substr(11, 11);
 }
-
