@@ -29,8 +29,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
-
+const charLimit = 20; // Set your desired character limit
 function openPopup(id = null) {
+    
     currentEditingId = id;
 
     if (id !== null && stopwatches[id]) {
@@ -41,6 +42,18 @@ function openPopup(id = null) {
 
     document.getElementById("error-message").innerText = "";
     document.getElementById("taskPopup").style.display = "block"; // Show popup
+    document.getElementById("taskInput").addEventListener("input", enforceCharLimit);
+}
+
+function enforceCharLimit() {
+    let inputField = document.getElementById("taskInput");
+    
+    if (inputField.value.length > charLimit) {
+        inputField.value = inputField.value.substring(0, charLimit); // Trim extra characters
+        document.getElementById("error-message").innerText = `Max ${charLimit} characters allowed!`;
+    } else {
+        document.getElementById("error-message").innerText = ""; // Clear error when valid
+    }
 }
 
 function closePopup() {
