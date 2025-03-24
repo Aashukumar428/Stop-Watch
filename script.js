@@ -43,6 +43,16 @@ function openPopup(id = null) {
     document.getElementById("error-message").innerText = "";
     document.getElementById("taskPopup").style.display = "block"; // Show popup
     document.getElementById("taskInput").addEventListener("input", enforceCharLimit);
+   
+    // Automatically focus on the input field
+    document.getElementById("taskInput").focus();
+
+     // Listen for "Enter" key press
+     taskInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            saveTaskName();
+        }
+    });
 }
 
 function enforceCharLimit() {
@@ -183,4 +193,8 @@ function updateDisplay(id) {
         (minutes < 10 ? "0" : "") + minutes + ":" +
         (seconds < 10 ? "0" : "") + seconds + ":" +
         (milliseconds < 10 ? "0" : "") + milliseconds;
+}
+
+function toggleThemePanel() {
+    document.getElementById("themePanel").classList.toggle("active");
 }
