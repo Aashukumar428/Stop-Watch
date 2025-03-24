@@ -249,3 +249,17 @@ button.addstopwatch {
     font-size: 18px;
     padding: 5px;
 }
+.add-button{
+    position: relative;
+    top: -15px;
+}
+button[onclick="saveTaskName()"]:hover {
+    background-color: #74c9fa;
+}
+button[onclick="closePopup()"]:hover {
+    background-color: #FFB6C1;
+}
+.add-button:hover {
+    background-color: #79e2fa;
+}
+}
