@@ -17,9 +17,26 @@
     </label>
 
     <button id="addStopwatch">+ Add New</button>
-    <div id="stopwatch-container"></div>
+    <div id="stopwatches"></div>
 
     <script src="script.js"></script>
+    
+   <!-- Task Name Popup -->
+   <div id="taskPopup" class="popup" style="display: none;">
+    <h2>Enter Task Name</h2>
+    <input type="text" id="taskInput">
+    <p id="error-message" style="color: red;"></p>
+    <button onclick="saveTaskName()">Save</button>
+    <button onclick="closePopup()">Cancel</button>
+</div>
 
+<div id="edit-popup" class="popup">
+    <h2>Edit Task Name</h2>
+    <input type="text" id="edit-task-input">
+    <button onclick="saveTaskName()">Save</button>
+    <button onclick="closePopup()">Cancel</button>
+</div>
+
+    
 </body>
 </html>
