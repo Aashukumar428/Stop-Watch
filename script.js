@@ -19,31 +19,88 @@ function toggleDarkMode() {
 
 // Stopwatch Logic
 let stopwatches = [];
-document.getElementById("addStopwatch").addEventListener("click", addStopwatch);
+let currentEditingId = null;  // To track which stopwatch is being named/edited
+document.addEventListener("DOMContentLoaded", function () {
+    const addStopwatchBtn = document.getElementById("addStopwatch");
 
-function addStopwatch() {
+    if (addStopwatchBtn) {
+        addStopwatchBtn.addEventListener("click", function () {
+            openPopup(); // Open the popup to enter the task name
+        });
+    }
+});
+
+function openPopup(id = null) {
+    currentEditingId = id;
+
+    if (id !== null && stopwatches[id]) {
+        document.getElementById("taskInput").value = stopwatches[id].name;
+    } else {
+        document.getElementById("taskInput").value = "";
+    }
+
+    document.getElementById("error-message").innerText = "";
+    document.getElementById("taskPopup").style.display = "block"; // Show popup
+}
+
+function closePopup() {
+    document.getElementById("taskPopup").style.display = "none"; // ✅ Hide popup
+}
+
+
+function saveTaskName() {
+    let taskName = document.getElementById("taskInput").value.trim();
+    
+    if (taskName === "") {
+        document.getElementById("error-message").innerText = "Task name cannot be empty!";
+        return;
+    }
+
+    // Check for duplicate task names
+    let isDuplicate = stopwatches.some((sw, index) => sw.name === taskName && index !== currentEditingId);
+    if (isDuplicate) {
+        document.getElementById("error-message").innerText = "Task name already exists. Choose a unique name.";
+        return;
+    }
+
+    if (currentEditingId === null) {
+        // Creating a new stopwatch
+        addStopwatch(taskName);
+    } else {
+        // Updating an existing stopwatch
+        document.getElementById(`taskname-${currentEditingId}`).innerText = taskName;
+        stopwatches[currentEditingId].name = taskName;
+    }
+
+    closePopup();
+}
+
+
+function addStopwatch(taskName) {
     let stopwatchId = stopwatches.length;
     
     let stopwatchDiv = document.createElement("div");
     stopwatchDiv.classList.add("stopwatch");
-    stopwatchDiv.setAttribute("id", `stopwatch-${stopwatchId}`);
+    stopwatchDiv.setAttribute("id", "stopwatch-" + stopwatchId);
     
     stopwatchDiv.innerHTML = `
-        <button class="delete-btn" onclick="deleteStopwatch(${stopwatchId})">❌</button>
-        <h2>Stopwatch ${stopwatchId + 1}</h2>
-        <p id="display-${stopwatchId}">00:00:00:00</p>
-        <div class="button-group">
-            <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
-            <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
-            <button class="stop-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
-            <button class="reset-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
-        </div>
-        <ul id="laps-${stopwatchId}"></ul>
-    `;
+    <span class="edit-btn" onclick="openPopup(${stopwatchId})">✏️</span>
+    <button class="delete-btn" onclick="deleteStopwatch(${stopwatchId})">❌</button>
+    <div class="task-header">
+        <h2 id="taskname-${stopwatchId}">${taskName}</h2>
+    </div>
+    <p id="display-${stopwatchId}" class="stopwatch-timer">00:00:00:00</p>
+    <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
+    <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
+    <button class="reset-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
+    <button class="lap-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
+    <ul id="laps-${stopwatchId}"></ul>
+`;
 
-    document.getElementById("stopwatch-container").appendChild(stopwatchDiv);
-    stopwatches.push({ running: false, time: 0, interval: null });
+    document.getElementById("stopwatches").appendChild(stopwatchDiv);
+    stopwatches.push({ name: taskName, time: 0, interval: null, laps: [] });
 }
+
 
 // Function to Delete Stopwatch
 function deleteStopwatch(id) {
@@ -51,12 +108,16 @@ function deleteStopwatch(id) {
     if (stopwatchElement) {
         stopwatchElement.remove();
     }
+
+    // Remove from the stopwatches array
+    stopwatches = stopwatches.filter((_, index) => index !== id);
 }
+
 
 function startStopwatch(id) {
     if (!stopwatches[id].interval) {
         stopwatches[id].interval = setInterval(() => {
-            stopwatches[id].time += 10;
+            stopwatches[id].time += 10; // Increment time in milliseconds
             updateDisplay(id);
         }, 10);
     }
@@ -83,8 +144,14 @@ function lapStopwatch(id) {
     let seconds = Math.floor((time % 60000) / 1000);
     let milliseconds = Math.floor((time % 1000) / 10);
 
-    let lapTime = `${hours}:${minutes}:${seconds}:${milliseconds}`;
-    
+    let lapTime = 
+        (hours < 10 ? "0" : "") + hours + ":" +
+        (minutes < 10 ? "0" : "") + minutes + ":" +
+        (seconds < 10 ? "0" : "") + seconds + ":" +
+        (milliseconds < 10 ? "0" : "") + milliseconds;
+
+    stopwatches[id].laps.push(lapTime);
+
     let lapList = document.getElementById(`laps-${id}`);
     let lapItem = document.createElement("li");
     lapItem.innerText = lapTime;
@@ -93,5 +160,14 @@ function lapStopwatch(id) {
 
 function updateDisplay(id) {
     let time = stopwatches[id].time;
-    document.getElementById(`display-${id}`).innerText = new Date(time).toISOString().substr(11, 11);
+    let hours = Math.floor(time / 3600000);
+    let minutes = Math.floor((time % 3600000) / 60000);
+    let seconds = Math.floor((time % 60000) / 1000);
+    let milliseconds = Math.floor((time % 1000) / 10);
+
+    document.getElementById(`display-${id}`).innerText =
+        (hours < 10 ? "0" : "") + hours + ":" +
+        (minutes < 10 ? "0" : "") + minutes + ":" +
+        (seconds < 10 ? "0" : "") + seconds + ":" +
+        (milliseconds < 10 ? "0" : "") + milliseconds;
 }
