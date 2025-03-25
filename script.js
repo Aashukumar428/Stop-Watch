@@ -198,3 +198,10 @@ function updateDisplay(id) {
 function toggleThemePanel() {
     document.getElementById("themePanel").classList.toggle("active");
 }
+// Function to Apply Theme
+function applyTheme(pageColor, stopwatchColor) {
+    document.body.style.backgroundColor = pageColor;
+    document.querySelectorAll('.stopwatch').forEach(function (element) {
+        element.style.backgroundColor = stopwatchColor;
+    });
+}
