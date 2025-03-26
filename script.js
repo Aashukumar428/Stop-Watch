@@ -62,17 +62,7 @@ function applyDarkModeStyles(isDarkMode) {
     }
 }
 
-// Apply saved dark mode setting on page load
-document.addEventListener("DOMContentLoaded", function () {
-    const isDarkMode = localStorage.getItem("darkMode") === "enabled";
 
-    if (isDarkMode) {
-        document.body.classList.add("dark-mode");
-        document.getElementById("toggleDarkMode").checked = true;
-    }
-
-    applyDarkModeStyles(isDarkMode);
-});
 
 // Stopwatch Logic
 let stopwatches = [];
@@ -164,6 +154,7 @@ function saveTaskName() {
 }
 
 
+
 function addStopwatch(taskName) {
     let stopwatchId = stopwatches.length;
 
@@ -171,26 +162,22 @@ function addStopwatch(taskName) {
     stopwatchDiv.classList.add("stopwatch");
     stopwatchDiv.setAttribute("id", "stopwatch-" + stopwatchId);
 
-    // Apply dark mode if enabled
+    // Apply theme - check in this order: dark mode > image theme > solid theme
     if (document.body.classList.contains("dark-mode")) {
-        stopwatchDiv.classList.add("dark-mode");
-        stopwatchDiv.style.color = "white"; // Ensure text color is white in dark mode
-    } else {
-        stopwatchDiv.style.backgroundColor = selectedStopwatchColor;
-        stopwatchDiv.style.color = "#333"; // Ensure text color matches light mode
+        stopwatchDiv.style.backgroundColor = "#222";
+        stopwatchDiv.style.color = "white";
+    } 
+    else if (document.body.classList.contains("image-theme")) {
+        stopwatchDiv.classList.add("glassmorphism");
+        stopwatchDiv.style.background = "rgba(255, 255, 255, 0.2)";
+        stopwatchDiv.style.backdropFilter = "blur(10px)";
+        stopwatchDiv.style.border = "1px solid rgba(255, 255, 255, 0.3)";
+    } 
+    else {
+        // Apply the currently selected solid theme color
+        stopwatchDiv.style.backgroundColor = currentTheme.colors.stopwatch || selectedStopwatchColor;
+        stopwatchDiv.style.color = "#333";
     }
-
-    // Update theme dynamically when dark mode is toggled
-    document.getElementById("toggleDarkMode").addEventListener("change", () => {
-        if (document.body.classList.contains("dark-mode")) {
-            stopwatchDiv.classList.add("dark-mode");
-            stopwatchDiv.style.color = "white";
-        } else {
-            stopwatchDiv.classList.remove("dark-mode");
-            stopwatchDiv.style.backgroundColor = selectedStopwatchColor;
-            stopwatchDiv.style.color = "#333";
-        }
-    });
 
     stopwatchDiv.innerHTML = `
     <span class="edit-btn" onclick="openPopup(${stopwatchId})">✏️</span>
@@ -208,8 +195,6 @@ function addStopwatch(taskName) {
 
     document.getElementById("stopwatches").appendChild(stopwatchDiv);
     stopwatches.push({ name: taskName, time: 0, interval: null, laps: [] });
-
-
 }
 
 // Function to Delete Stopwatch
@@ -288,6 +273,14 @@ function toggleThemePanel() {
     if (themePanel.classList.contains("active")) {
         // Add event listener to detect clicks outside
         document.addEventListener("click", closeThemePanelOnClickOutside);
+
+        // Add event listeners for image theme selection
+        document.querySelectorAll(".image-theme-option").forEach(option => {
+            option.addEventListener("click", function () {
+                const imagePath = this.getAttribute("data-image-path");
+                applyThemeImage(imagePath);
+            });
+        });
     } else {
         // Remove event listener when the panel is closed
         document.removeEventListener("click", closeThemePanelOnClickOutside);
@@ -304,6 +297,7 @@ function closeThemePanelOnClickOutside(event) {
         document.removeEventListener("click", closeThemePanelOnClickOutside);
     }
 }
+
 
 // Function to Apply Theme
 let selectedPageColor = "#f5f8f4";
@@ -322,4 +316,133 @@ function applyTheme(pageColor, stopwatchColor) {
     }
 }
 
+// Replace all theme-related functions with this:
+
+let currentTheme = {
+    type: 'solid', // 'solid' or 'image'
+    colors: { page: '#f5f8f4', stopwatch: '#d4d7cc' },
+    image: null
+};
+
+function applyTheme(pageColor, stopwatchColor) {
+    // Set current theme
+    currentTheme.type = 'solid';
+    currentTheme.colors = { page: pageColor, stopwatch: stopwatchColor };
+    
+    // Remove image theme if present
+    document.body.classList.remove("image-theme");
+    document.body.style.backgroundImage = 'none';
+    
+    // Apply solid colors
+    document.body.style.backgroundColor = pageColor;
+    document.querySelectorAll(".stopwatch").forEach(el => {
+        el.style.backgroundColor = stopwatchColor;
+        el.classList.remove("glassmorphism");
+    });
+    
+    // Update dark mode if active
+    if (document.body.classList.contains("dark-mode")) {
+        applyDarkModeStyles(true);
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('theme', JSON.stringify(currentTheme));
+}
+
+function applyThemeImage(imagePath) {
+    // Set current theme
+    currentTheme.type = 'image';
+    currentTheme.image = imagePath;
+    
+    // Apply image theme
+    document.body.classList.add("image-theme");
+    document.body.style.background = `url('${imagePath}') no-repeat center center/cover fixed`;
+    
+    // Apply glassmorphism
+    document.querySelectorAll(".stopwatch, .popup, .theme-panel").forEach(el => {
+        el.classList.add("glassmorphism");
+    });
+    
+    // Save to localStorage
+    localStorage.setItem('theme', JSON.stringify(currentTheme));
+}
+
+// Ensure newly added stopwatches follow glassmorphism if image theme is active
+function updateNewStopwatches() {
+    document.querySelectorAll(".stopwatch").forEach(stopwatch => {
+        if (document.body.classList.contains("image-theme") && !stopwatch.classList.contains("glassmorphism")) {
+            stopwatch.classList.add("glassmorphism");
+            stopwatch.style.background = "rgba(255, 255, 255, 0.2)"; // Semi-transparent background
+            stopwatch.style.backdropFilter = "blur(10px)"; // Blur effect
+            stopwatch.style.border = "1px solid rgba(255, 255, 255, 0.3)"; // Subtle border
+        }
+    });
+}
+
+// Hook into the addStopwatch function to ensure new stopwatches follow the current theme
+// Theme application for new stopwatches
+const originalAddStopwatch = addStopwatch;
+addStopwatch = function(taskName) {
+    originalAddStopwatch(taskName);
+    
+    // No need for separate image theme check since we handle it in addStopwatch now
+};
+
+// Add to your DOMContentLoaded event handler
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    const theme = JSON.parse(savedTheme);
+    if (theme.type === 'image') {
+        applyThemeImage(theme.image);
+    } else {
+        applyTheme(theme.colors.page, theme.colors.stopwatch);
+    }
+}
+
+function applyDarkModeStyles(isDarkMode) {
+    const elements = document.querySelectorAll(".stopwatch, .popup, .theme-panel");
+    
+    if (isDarkMode) {
+        document.body.style.backgroundColor = "#121212";
+        document.body.style.color = "white";
+        
+        elements.forEach(el => {
+            el.style.backgroundColor = currentTheme.type === 'image' ? "rgba(0,0,0,0.2)" : "#333";
+            el.style.color = "white";
+        });
+    } else {
+        if (currentTheme.type === 'solid') {
+            document.body.style.backgroundColor = currentTheme.colors.page;
+            elements.forEach(el => {
+                el.style.backgroundColor = currentTheme.colors.stopwatch;
+            });
+        }
+        document.body.style.color = "#333";
+        elements.forEach(el => {
+            el.style.color = "#333";
+        });
+    }
+}
+
+/* magnet button effect */
+
+// Add to all buttons
+document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('mousedown', () => {
+      btn.style.transform = 'translateY(3px)';
+    });
+    btn.addEventListener('mouseup', () => {
+      btn.style.transform = 'translateY(0)';
+    });
+  });
+
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      btn.style.setProperty('--x', `${x}px`);
+      btn.style.setProperty('--y', `${y}px`);
+    });
+  });
 
