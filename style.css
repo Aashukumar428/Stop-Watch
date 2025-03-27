@@ -207,7 +207,7 @@ input:checked + .slider:before {
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     z-index: 1001;
-    width: 300px;
+    width: 200px;
     max-width: 90%;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
@@ -241,7 +241,6 @@ input:checked + .slider:before {
     right: -300px;
     width: 150px;
     height: 100%;
-    box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
     padding: 20px;
     transition: right 0.3s ease-in-out;
     z-index: 999;
@@ -347,7 +346,7 @@ body.image-theme {
     padding: 0;
 }
 
-/* Dark Mode Styles */
+/* Dark Mode Styles stopwatch timer glow*/
 .dark-mode .stopwatch-timer {
     text-shadow: 0 0 5px #1eb0ff, 
                  0 0 10px rgba(30, 176, 255, 0.5);
@@ -385,3 +384,85 @@ button {
     height: 200px;
   }
 
+/* Menu Button (Hamburger) */
+#menu-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 24px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 10px;
+    z-index: 1001;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3); /* Added shadow effect */
+    transition: left 0.4s ease-in-out, box-shadow 0.3s ease, border-radius 0.3s ease; /* Smooth transition for hover effect */
+    border-radius: 50px; /* Changed shape to circle */
+}
+/* Move menu button when menu opens */
+.menu-open #menu-button {
+    left: 160px;
+    transition: left 0.4s ease-in-out; /* Smooth opening */
+}
+
+/* Faster closing transition */
+#menu-button.closing {
+    transition: left 0.2s ease-in-out; /* Faster closing */
+}
+
+#menu-button:hover {
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
+}
+@keyframes gentleBounce {
+    0% { left: -400px; }
+    90% { left: 10px; }
+    100% { left: 0; }
+}
+
+
+/* Menu Panel (Hidden by Default) */
+#menu-panel {
+    position: fixed;
+    top: 0;
+    left: -400px;  /* Hide panel off-screen */
+    width: 180px;
+    height: 100vh;
+    padding: 20px;
+    z-index: 1000;
+    border-radius: 10px 0 0 10px; /* Optional: rounded corners */
+    overflow-y: auto; /* Ensure it's scrollable */
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-out;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+
+}
+/* Apply animation when menu opens */
+.menu-open #menu-panel {
+    animation: gentleBounce 0.4s ease-out;
+    left: 0px;
+}
+/* ===== Overlay Styles ===== */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Darker for better visibility */
+    backdrop-filter: blur(12px); /* Increased blur for premium effect */
+    z-index: 998; /* Below the menu panel */
+    opacity: 0;
+    pointer-events: none; /* Prevents interaction when hidden */
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Active state */
+#overlay.active {
+    opacity: 1;
+    pointer-events: all; /* Enables interaction when visible */
+}
