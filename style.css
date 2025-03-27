@@ -23,6 +23,44 @@ body {
     padding: 20px;
 }
 
+    /* this is for the typewritter effect */
+/* Typewriter Effect */
+.typewriter {
+    display: inline-block;
+    position: relative;
+    color: #8bf; /* Initial color */
+    min-width: 120px; /* Prevent layout shift */
+    text-align: left;
+
+    text-shadow: 
+    -1px -1px 0 var(--border-color),
+     1px -1px 0 var(--border-color),
+    -1px  1px 0 var(--border-color),
+     1px  1px 0 var(--border-color);
+  /* Each color class will control its own border via --border-color */
+  }
+  
+  .typewriter::after {
+    content: "|";
+    position: relative; /* Changed from absolute */
+    left: 2px; /* Small spacing from text */
+    animation: blink 0.7s infinite;
+    display: inline-block; /* Ensures it stays with text */
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  
+  /* Color classes for different words */
+  .color-teal { color: #2dd4bf; border-color: #115e59; }    /* Teal */
+.color-amber { color: #f59e0b; border-color: #92400e; }   /* Amber */
+.color-rose { color: #f43f5e; border-color: #9f1239; }    /* Rose */
+.color-indigo { color: #6366f1; border-color: #3730a3; }  /* Indigo */
+.color-emerald { color: #10b981; border-color: #065f46; } /* Emerald */
+.color-violet { color: #8b5cf6; border-color: #5b21b6; }  /* Violet */
+
 /* Stopwatches container */
 #stopwatches {
     display: flex;
@@ -165,15 +203,22 @@ input:checked + .slider:before {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: var(--popup-bg);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     z-index: 1001;
     width: 300px;
     max-width: 90%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #333;
 }
-
+.dark-mode .popup {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(0, 0, 0, 0.3);
+    color: white;
+}
 .popup h2 {
     margin-top: 0;
 }
@@ -196,7 +241,6 @@ input:checked + .slider:before {
     right: -300px;
     width: 150px;
     height: 100%;
-    background-color: var(--popup-bg);
     box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
     padding: 20px;
     transition: right 0.3s ease-in-out;
@@ -206,6 +250,9 @@ input:checked + .slider:before {
     overflow-y: auto; /* Ensure it's scrollable */
     box-shadow: -3px 0 15px rgba(0, 0, 0, 0.2);
     transition: all 0.7s ease-out;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 
 }
 
@@ -224,7 +271,7 @@ input:checked + .slider:before {
     flex-direction: column;
     gap: 15px;
     margin-top: 20px;
-    padding-bottom: 50px; /* Adds empty scrollable space after last item */
+    padding-bottom: 70px; /* Adds empty scrollable space after last item */
 }
 
 .theme-option {
@@ -263,15 +310,6 @@ input:checked + .slider:before {
     cursor: pointer;
     z-index: 1000;
 }
-/*.theme-panel h3 {
-    position: sticky;
-    top: 0;
-    background-color: inherit;
-    padding: 10px 0;
-    margin: 0;
-    z-index: 1;
-} */
-
 
 /* Glassmorphism Effect */
 .glassmorphism {
@@ -309,16 +347,7 @@ body.image-theme {
     padding: 0;
 }
 
-/* floating button 
-.add-button {
-    animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-}
-*/
+/* Dark Mode Styles */
 .dark-mode .stopwatch-timer {
     text-shadow: 0 0 5px #1eb0ff, 
                  0 0 10px rgba(30, 176, 255, 0.5);
@@ -355,3 +384,4 @@ button {
     width: 200px;
     height: 200px;
   }
+
