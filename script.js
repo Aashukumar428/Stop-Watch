@@ -588,5 +588,53 @@ document.querySelectorAll('button').forEach(btn => {
       btn.style.setProperty('--x', `${x}px`);
       btn.style.setProperty('--y', `${y}px`);
     });
-  });
+});
 
+// Menu Panel Logic
+
+function toggleMenu() {
+    let menu = document.getElementById("menu-panel");
+    let overlay = document.getElementById("overlay");
+    let menuButton = document.getElementById("menu-button");
+
+    if (menu.style.left === "0px") {
+        closeMenu();
+    } else {
+        openMenu();
+    }
+}
+
+function openMenu() {
+    let menu = document.getElementById("menu-panel");
+    let overlay = document.getElementById("overlay");
+    let menuButton = document.getElementById("menu-button");
+
+    menu.style.left = "0px";  // Slide in menu
+    overlay.classList.add("active"); // Show overlay
+    document.body.classList.add("menu-open"); // Move menu button
+    menuButton.classList.remove("closing"); // Ensure smooth opening transition
+
+    document.addEventListener("click", closeOnOutsideClick);
+}
+
+function closeMenu() {
+    let menu = document.getElementById("menu-panel");
+    let overlay = document.getElementById("overlay");
+    let menuButton = document.getElementById("menu-button");
+
+    menu.style.left = "-400px";  // Slide out menu
+    overlay.classList.remove("active"); // Hide overlay
+    document.body.classList.remove("menu-open"); // Move button back
+    menuButton.classList.add("closing"); // Apply faster closing transition
+
+    document.removeEventListener("click", closeOnOutsideClick);
+}
+
+function closeOnOutsideClick(event) {
+    let menu = document.getElementById("menu-panel");
+    let menuButton = document.getElementById("menu-button");
+
+    if (!menu.contains(event.target) && !menuButton.contains(event.target)) {
+        closeMenu();
+    }
+}
