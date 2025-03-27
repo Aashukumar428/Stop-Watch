@@ -415,12 +415,6 @@ button {
 #menu-button:hover {
     box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
 }
-@keyframes gentleBounce {
-    0% { left: -400px; }
-    90% { left: 10px; }
-    100% { left: 0; }
-}
-
 
 /* Menu Panel (Hidden by Default) */
 #menu-panel {
@@ -440,11 +434,6 @@ button {
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
 
-}
-/* Apply animation when menu opens */
-.menu-open #menu-panel {
-    animation: gentleBounce 0.4s ease-out;
-    left: 0px;
 }
 /* ===== Overlay Styles ===== */
 #overlay {
