@@ -170,14 +170,13 @@ function openPopup(id = null) {
 
     // Automatically focus on the input field
     document.getElementById("taskInput").focus();
-
     // Listen for "Enter" key press
     taskInput.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
-            closePopup();
-            saveTaskName();
+        saveTaskName();
+
         }
-    });
+});
 }
 
 function enforceCharLimit() {
@@ -205,7 +204,11 @@ function saveTaskName() {
     }
 
     // Check for duplicate task names
-    let isDuplicate = stopwatches.some((sw, index) => sw.name === taskName && index !== currentEditingId);
+    let isDuplicate = stopwatches.some(sw => 
+        sw.name === taskName && 
+        (currentEditingId === null || sw.id !== currentEditingId)
+    );
+    
     if (isDuplicate) {
         document.getElementById("error-message").innerText = "Task name already exists. Choose a unique name.";
         return;
@@ -216,11 +219,15 @@ function saveTaskName() {
         addStopwatch(taskName);
     } else {
         // Updating an existing stopwatch
-        document.getElementById(`taskname-${currentEditingId}`).innerText = taskName;
-        stopwatches[currentEditingId].name = taskName;
+        const stopwatch = stopwatches.find(sw => sw.id === currentEditingId);
+        if (stopwatch) {
+            stopwatch.name = taskName;
+            document.getElementById(`taskname-${currentEditingId}`).innerText = taskName;
+        }
     }
 
     closePopup();
+    currentEditingId = null; // Reset the editing ID after saving
 }
 
 
