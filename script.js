@@ -1,4 +1,73 @@
+
 document.getElementById("toggleDarkMode").addEventListener("change", toggleDarkMode);
+
+// typeWriter effect for the title //
+document.addEventListener('DOMContentLoaded', function() {
+    const titleElement = document.getElementById('animated-title');
+    const words = [
+        { text: "Stopwatch", color: "color-teal" },
+        { text: "Fitness", color: "color-amber" },
+        { text: "Health", color: "color-rose" },
+        { text: "Tracker", color: "color-indigo" },
+        { text: "Timer", color: "color-emerald" },
+        { text: "Wellness", color: "color-violet" }
+    ];
+    
+    // Timing controls (in milliseconds)
+    const typingSpeed = 150;    // Time between letters appearing
+    const deletingSpeed = 200;   // Time between letters disappearing
+    const pauseBeforeDelete = 200; // Time showing complete word before deleting
+    const pauseBeforeType = 20;   // Time between words
+    
+    let currentIndex = 0;
+    
+    function typeWriter(wordObj, callback) {
+      // Remove all color classes and add the new one
+      titleElement.className = 'typewriter ' + wordObj.color;
+      
+      let i = 0;
+      function type() {
+        if (i < wordObj.text.length) {
+          titleElement.textContent = wordObj.text.substring(0, i+1);
+          i++;
+          setTimeout(type, typingSpeed);
+        } else if (callback) {
+          setTimeout(callback, pauseBeforeDelete);
+        }
+      }
+      type();
+    }
+    
+    function deleteText(callback) {
+      let text = titleElement.textContent;
+      let i = text.length;
+      
+      function del() {
+        if (i > 0) {
+          titleElement.textContent = text.substring(0, i-1);
+          i--;
+          setTimeout(del, deletingSpeed);
+        } else if (callback) {
+          setTimeout(callback, pauseBeforeType);
+        }
+      }
+      del();
+    }
+    
+    function cycleWords() {
+      currentIndex = (currentIndex + 1) % words.length;
+      typeWriter(words[currentIndex], function() {
+        deleteText(cycleWords);
+      });
+    }
+    
+    // Initialize with first word
+    typeWriter(words[0], function() {
+      setTimeout(function() {
+        deleteText(cycleWords);
+      }, pauseBeforeDelete);
+    });
+  });
 
 // Load Dark Mode preference on page load
 if (localStorage.getItem("darkMode") === "enabled") {
@@ -155,46 +224,61 @@ function saveTaskName() {
 
 
 
+// Removed duplicate declaration of stopwatches
+
 function addStopwatch(taskName) {
-    let stopwatchId = stopwatches.length;
+    let stopwatchId = Date.now(); // Unique ID for each stopwatch
 
     let stopwatchDiv = document.createElement("div");
     stopwatchDiv.classList.add("stopwatch");
-    stopwatchDiv.setAttribute("id", "stopwatch-" + stopwatchId);
+    stopwatchDiv.setAttribute("id", `stopwatch-${stopwatchId}`);
 
-    // Apply theme - check in this order: dark mode > image theme > solid theme
-    if (document.body.classList.contains("dark-mode")) {
+    // Apply theme (your existing theme code remains unchanged)
+    if (document.body.classList.contains("image-theme")) {
+        stopwatchDiv.classList.add("glassmorphism");
+        stopwatchDiv.style.backdropFilter = "blur(10px)";
+
+        if (document.body.classList.contains("dark-mode")) {
+            stopwatchDiv.style.background = "rgba(0, 0, 0, 0.2)";
+            stopwatchDiv.style.border = "1px solid rgba(0, 0, 0, 0.3)";
+            stopwatchDiv.style.color = "white";
+        } else {
+            stopwatchDiv.style.background = "rgba(255, 255, 255, 0.2)";
+            stopwatchDiv.style.border = "1px solid rgba(255, 255, 255, 0.3)";
+            stopwatchDiv.style.color = "#333";
+        }
+    } else if (document.body.classList.contains("dark-mode")) {
         stopwatchDiv.style.backgroundColor = "#222";
         stopwatchDiv.style.color = "white";
-    } 
-    else if (document.body.classList.contains("image-theme")) {
-        stopwatchDiv.classList.add("glassmorphism");
-        stopwatchDiv.style.background = "rgba(255, 255, 255, 0.2)";
-        stopwatchDiv.style.backdropFilter = "blur(10px)";
-        stopwatchDiv.style.border = "1px solid rgba(255, 255, 255, 0.3)";
-    } 
-    else {
-        // Apply the currently selected solid theme color
+    } else {
         stopwatchDiv.style.backgroundColor = currentTheme.colors.stopwatch || selectedStopwatchColor;
         stopwatchDiv.style.color = "#333";
     }
 
     stopwatchDiv.innerHTML = `
-    <span class="edit-btn" onclick="openPopup(${stopwatchId})">✏️</span>
-    <button class="delete-btn" onclick="deleteStopwatch(${stopwatchId})">❌</button>
-    <div class="task-header">
-        <h2 id="taskname-${stopwatchId}">${taskName}</h2>
-    </div>
-    <p id="display-${stopwatchId}" class="stopwatch-timer">00:00:00:00</p>
-    <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
-    <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
-    <button class="reset-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
-    <button class="lap-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
-    <ul id="laps-${stopwatchId}"></ul>
+        <span class="edit-btn" onclick="openPopup(${stopwatchId})">✏️</span>
+        <button class="delete-btn" onclick="deleteStopwatch(${stopwatchId})">❌</button>
+        <div class="task-header">
+            <h2 id="taskname-${stopwatchId}">${taskName}</h2>
+        </div>
+        <p id="display-${stopwatchId}" class="stopwatch-timer">00:00:00:00</p>
+        <button class="start-btn" onclick="startStopwatch(${stopwatchId})">Start</button>
+        <button class="pause-btn" onclick="pauseStopwatch(${stopwatchId})">Pause</button>
+        <button class="reset-btn" onclick="resetStopwatch(${stopwatchId})">Reset</button>
+        <button class="lap-btn" onclick="lapStopwatch(${stopwatchId})">Lap</button>
+        <ul id="laps-${stopwatchId}"></ul>
     `;
 
     document.getElementById("stopwatches").appendChild(stopwatchDiv);
-    stopwatches.push({ name: taskName, time: 0, interval: null, laps: [] });
+    
+    // Initialize the stopwatch object with the ID
+    stopwatches.push({
+        id: stopwatchId,
+        name: taskName,
+        time: 0,
+        interval: null,
+        laps: []
+    });
 }
 
 // Function to Delete Stopwatch
@@ -203,69 +287,88 @@ function deleteStopwatch(id) {
     if (stopwatchElement) {
         stopwatchElement.remove();
     }
-
-    // Remove from the stopwatches array
-    stopwatches = stopwatches.filter((_, index) => index !== id);
+    
+    // Find and clear the interval before removing
+    const index = stopwatches.findIndex(sw => sw.id === id);
+    if (index !== -1) {
+        clearInterval(stopwatches[index].interval);
+        stopwatches.splice(index, 1);
+    }
 }
 
 function startStopwatch(id) {
-    if (!stopwatches[id].interval) {
-        stopwatches[id].interval = setInterval(() => {
-            stopwatches[id].time += 10; // Increment time in milliseconds
+    const stopwatch = stopwatches.find(sw => sw.id === id);
+    if (stopwatch && !stopwatch.interval) {
+        const startTime = Date.now() - stopwatch.time;
+        stopwatch.interval = setInterval(() => {
+            stopwatch.time = Date.now() - startTime;
             updateDisplay(id);
         }, 10);
     }
 }
 
 function pauseStopwatch(id) {
-    clearInterval(stopwatches[id].interval);
-    stopwatches[id].interval = null;
+    const stopwatch = stopwatches.find(sw => sw.id === id);
+    if (stopwatch && stopwatch.interval) {
+        clearInterval(stopwatch.interval);
+        stopwatch.interval = null;
+    }
 }
 
 function resetStopwatch(id) {
-    clearInterval(stopwatches[id].interval);
-    stopwatches[id].interval = null;
-    stopwatches[id].time = 0;
-    stopwatches[id].laps = [];
-    updateDisplay(id);
-    document.getElementById(`laps-${id}`).innerHTML = "";
+    const stopwatch = stopwatches.find(sw => sw.id === id);
+    if (stopwatch) {
+        clearInterval(stopwatch.interval);
+        stopwatch.interval = null;
+        stopwatch.time = 0;
+        stopwatch.laps = [];
+        updateDisplay(id);
+        document.getElementById(`laps-${id}`).innerHTML = "";
+    }
 }
 
 function lapStopwatch(id) {
-    let time = stopwatches[id].time;
-    let hours = Math.floor(time / 3600000);
-    let minutes = Math.floor((time % 3600000) / 60000);
-    let seconds = Math.floor((time % 60000) / 1000);
-    let milliseconds = Math.floor((time % 1000) / 10);
+    const stopwatch = stopwatches.find(sw => sw.id === id);
+    if (stopwatch) {
+        const time = stopwatch.time;
+        const hours = Math.floor(time / 3600000);
+        const minutes = Math.floor((time % 3600000) / 60000);
+        const seconds = Math.floor((time % 60000) / 1000);
+        const milliseconds = Math.floor((time % 1000) / 10);
 
-    let lapTime =
-        (hours < 10 ? "0" : "") + hours + ":" +
-        (minutes < 10 ? "0" : "") + minutes + ":" +
-        (seconds < 10 ? "0" : "") + seconds + ":" +
-        (milliseconds < 10 ? "0" : "") + milliseconds;
+        const lapTime =
+            (hours < 10 ? "0" : "") + hours + ":" +
+            (minutes < 10 ? "0" : "") + minutes + ":" +
+            (seconds < 10 ? "0" : "") + seconds + ":" +
+            (milliseconds < 10 ? "0" : "") + milliseconds;
 
-    stopwatches[id].laps.push(lapTime);
+        stopwatch.laps.push(lapTime);
 
-    let lapList = document.getElementById(`laps-${id}`);
-    let lapItem = document.createElement("li");
-    lapItem.innerText = lapTime;
-    lapList.appendChild(lapItem);
+        const lapList = document.getElementById(`laps-${id}`);
+        const lapItem = document.createElement("li");
+        lapItem.innerText = `Lap ${stopwatch.laps.length}: ${lapTime}`;
+        lapList.prepend(lapItem); // Add new laps at the top
+    }
 }
 
 function updateDisplay(id) {
-    let time = stopwatches[id].time;
-    let hours = Math.floor(time / 3600000);
-    let minutes = Math.floor((time % 3600000) / 60000);
-    let seconds = Math.floor((time % 60000) / 1000);
-    let milliseconds = Math.floor((time % 1000) / 10);
+    const stopwatch = stopwatches.find(sw => sw.id === id);
+    if (stopwatch) {
+        const time = stopwatch.time;
+        const hours = Math.floor(time / 3600000);
+        const minutes = Math.floor((time % 3600000) / 60000);
+        const seconds = Math.floor((time % 60000) / 1000);
+        const milliseconds = Math.floor((time % 1000) / 10);
 
-    document.getElementById(`display-${id}`).innerText =
-        (hours < 10 ? "0" : "") + hours + ":" +
-        (minutes < 10 ? "0" : "") + minutes + ":" +
-        (seconds < 10 ? "0" : "") + seconds + ":" +
-        (milliseconds < 10 ? "0" : "") + milliseconds;
+        document.getElementById(`display-${id}`).innerText =
+            (hours < 10 ? "0" : "") + hours + ":" +
+            (minutes < 10 ? "0" : "") + minutes + ":" +
+            (seconds < 10 ? "0" : "") + seconds + ":" +
+            (milliseconds < 10 ? "0" : "") + milliseconds;
+    }
 }
 
+// Theme Panel Logic
 function toggleThemePanel() {
     let themePanel = document.getElementById("themePanel");
     themePanel.classList.toggle("active");
@@ -368,16 +471,17 @@ function applyThemeImage(imagePath) {
 }
 
 // Ensure newly added stopwatches follow glassmorphism if image theme is active
-function updateNewStopwatches() {
-    document.querySelectorAll(".stopwatch").forEach(stopwatch => {
-        if (document.body.classList.contains("image-theme") && !stopwatch.classList.contains("glassmorphism")) {
-            stopwatch.classList.add("glassmorphism");
-            stopwatch.style.background = "rgba(255, 255, 255, 0.2)"; // Semi-transparent background
-            stopwatch.style.backdropFilter = "blur(10px)"; // Blur effect
-            stopwatch.style.border = "1px solid rgba(255, 255, 255, 0.3)"; // Subtle border
-        }
-    });
-}
+// Replace the glassmorphism line in applyThemeImage()
+document.querySelectorAll(".stopwatch").forEach(el => {
+    el.style.backdropFilter = "blur(10px)";
+    if (document.body.classList.contains("dark-mode")) {
+        el.style.background = "rgba(0, 0, 0, 0.2)";
+        el.style.border = "1px solid rgba(0, 0, 0, 0.3)";
+    } else {
+        el.style.background = "rgba(255, 255, 255, 0.2)";
+        el.style.border = "1px solid rgba(255, 255, 255, 0.3)";
+    }
+});
 
 // Hook into the addStopwatch function to ensure new stopwatches follow the current theme
 // Theme application for new stopwatches
@@ -400,25 +504,57 @@ if (savedTheme) {
 }
 
 function applyDarkModeStyles(isDarkMode) {
-    const elements = document.querySelectorAll(".stopwatch, .popup, .theme-panel");
+    const elements = document.querySelectorAll(".stopwatch");
+    const popups = document.querySelectorAll(".popup");
+    const themePanel = document.querySelector(".theme-panel");
     
     if (isDarkMode) {
         document.body.style.backgroundColor = "#121212";
         document.body.style.color = "white";
         
+        // Apply glassmorphism to popups and panel regardless of theme
+        popups.forEach(popup => {
+            popup.style.background = "rgba(0, 0, 0, 0.3)";
+            popup.style.backdropFilter = "blur(10px)";
+            popup.style.border = "1px solid rgba(0, 0, 0, 0.4)";
+            popup.style.color = "white";
+        });
+        
+        if (themePanel) {
+            themePanel.style.background = "rgba(0, 0, 0, 0.3)";
+            themePanel.style.backdropFilter = "blur(10px)";
+            themePanel.style.border = "1px solid rgba(0, 0, 0, 0.4)";
+            themePanel.style.color = "white";
+        }
+        
+        // Handle stopwatches based on theme
         elements.forEach(el => {
-            el.style.backgroundColor = currentTheme.type === 'image' ? "rgba(0,0,0,0.2)" : "#333";
+            el.style.backgroundColor = currentTheme.type === 'image' ? "rgba(0,0,0,0.2)" : "#222";
             el.style.color = "white";
         });
+        
     } else {
-        if (currentTheme.type === 'solid') {
-            document.body.style.backgroundColor = currentTheme.colors.page;
-            elements.forEach(el => {
-                el.style.backgroundColor = currentTheme.colors.stopwatch;
-            });
-        }
+        document.body.style.backgroundColor = currentTheme.type === 'solid' ? currentTheme.colors.page : selectedPageColor;
         document.body.style.color = "#333";
+        
+        // Apply light glassmorphism to popups and panel
+        popups.forEach(popup => {
+            popup.style.background = "rgba(255, 255, 255, 0.2)";
+            popup.style.backdropFilter = "blur(10px)";
+            popup.style.border = "1px solid rgba(255, 255, 255, 0.3)";
+            popup.style.color = "#333";
+        });
+        
+        if (themePanel) {
+            themePanel.style.background = "rgba(255, 255, 255, 0.2)";
+            themePanel.style.backdropFilter = "blur(10px)";
+            themePanel.style.border = "1px solid rgba(255, 255, 255, 0.3)";
+            themePanel.style.color = "#333";
+        }
+        
+        // Handle stopwatches based on theme
         elements.forEach(el => {
+            el.style.backgroundColor = currentTheme.type === 'solid' ? currentTheme.colors.stopwatch : selectedStopwatchColor;
             el.style.color = "#333";
         });
     }
