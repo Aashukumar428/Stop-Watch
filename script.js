@@ -174,6 +174,7 @@ function openPopup(id = null) {
     // Listen for "Enter" key press
     taskInput.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
+            closePopup();
             saveTaskName();
         }
     });
